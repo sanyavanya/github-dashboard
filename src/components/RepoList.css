@@ -1,0 +1,58 @@
+.repoList {
+	/*background-color: cyan;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 22em;
+
+}
+
+table {
+  border: none;
+  border-collapse: collapse;
+} 
+/* границы ячеек первого ряда таблицы */
+th {
+  border: 1px solid black;
+  font-weight: 500;
+  background-color: #a1cd36;
+  padding: 3px 10px 3px 10px;
+}
+ /*границы ячеек тела таблицы */
+td {
+  border: 1px solid grey;
+  padding: 3px 10px 3px 10px;
+}
+
+@keyframes spinner {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+	height: 5em;
+  -webkit-animation: spinner 1200ms ease-in-out infinite;
+  -moz-animation: spinner 1200ms ease-in-out infinite;
+  -ms-animation: spinner 1200ms ease-in-out infinite;
+  -o-animation: spinner 1200ms ease-in-out infinite;
+  animation: spinner 1200ms ease-in-out infinite;
+}
+
+.spinnerWrap {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

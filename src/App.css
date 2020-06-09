@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  font-weight: 300;  
 }
 
 .App-logo {
@@ -35,4 +36,91 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+footer {
+  position: absolute;
+  left: 50%;
+  margin-left: -5em;
+  bottom: 10px;
+}
+
+h1 {
+  margin-top: 2em;
+}
+
+h2 {
+  font-weight: 300;
+  margin-bottom: -0.5em;
+}
+
+h3 {
+  font-weight: 500;
+  font-size: 1.5em;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#gh {
+  color: #9b6df5;
+}
+
+#db {
+  color: #ee6a5e;
+}
+
+.fatLink {
+  font-weight: 300;
+  color: #4ca8fe;
+  transition-duration: 200ms;
+}
+
+.fatLink:hover {
+  color: #ee6a5e;
+  transition-duration: 200ms;
+}
+
+.fatName {
+  font-weight: 500;
+  color: #9b6df5;
+  transition-duration: 200ms;
+  text-decoration: underline;
+}
+
+.fatName:hover {
+  color: #ee6a5e;
+  transition-duration: 200ms;
+  cursor: pointer;
+}
+
+.userpic {
+  height: 10em;
+}
+
+.cardDiv {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  left: 5em;
+}
+
+.repoDiv {
+  padding-left: 2em;
+  padding-right: 2em;
+  text-align: left;
+  width: 20em;
+}
+
+.repoStars {
+  font-size: 1.2em;
+  font-weight: 500;
+}
+
+.listTitle {
+  font-weight: 500;
+  margin-bottom: -1em;
+}
+
+.ownerDiv {
+  margin-top: 0.5em;
 }
