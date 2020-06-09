@@ -22,3 +22,7 @@
 #main:hover {
 	cursor: pointer;
 }
+
+#paginator {
+	margin-top: 1em;
+}

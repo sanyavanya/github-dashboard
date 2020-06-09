@@ -256,7 +256,9 @@ class App extends Component {
             {this.state.card}
           </div>
         }
-        <footer>©2020 <a href="https://github.com/sanyavanya">@sanyavanya</a></footer>
+        {
+          //<footer>©2020 <a href="https://github.com/sanyavanya">@sanyavanya</a></footer>
+        }
       </div>
     ); 
   }

@@ -27,7 +27,7 @@ const Paginator = ({pagesAmount, page, onPageChange}) => {
 
 
 	return (
-		<div>{paginator}</div>
+		<div id='paginator'>{paginator}</div>
 	)
 }
 
