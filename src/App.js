@@ -252,7 +252,7 @@ class App extends Component {
           </div>
           :
           <div>
-            <span className="fatName" onClick={() => this.setState({route: 'home'})}>← BACK</span><br/><br/>
+            <span className="fatName" onClick={() => this.setState({route: 'home'})}>← Back to Dashboard</span><br/><br/>
             {this.state.card}
           </div>
         }
