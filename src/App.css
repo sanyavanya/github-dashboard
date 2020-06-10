@@ -39,10 +39,7 @@
 }
 
 footer {
-  position: absolute;
-  left: 50%;
-  margin-left: -5em;
-  bottom: 10px;
+  font-size: 0.8em;
 }
 
 h1 {

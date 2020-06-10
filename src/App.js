@@ -58,6 +58,7 @@ class App extends Component {
       })
       .then(response => response.json())
       .then(response => {
+        let fixedUrl = 'https://github.com' + response.url.substr(28);
         let languagesDiv = [];
         let contributorsDiv = [];
 
@@ -74,12 +75,13 @@ class App extends Component {
           let keys = [];
           for (let k in langResponse) keys.push(k);
           let listAggregator = [];
-
-          for (let i = 0; i < keys.length; i++) {
-            let newLi = [<li key={"lang li #" + i}>{keys[i]}</li>];
-            listAggregator = listAggregator.concat(newLi);
+          if (keys.length !== 0) {
+            for (let i = 0; i < keys.length; i++) {
+              let newLi = [<li key={"lang li #" + i}>{keys[i]}</li>];
+              listAggregator = listAggregator.concat(newLi);
+            }
+            languagesDiv = <div key="languages list"><div className="listTitle">Languages used:</div><ul key="languages list">{listAggregator}</ul></div>
           }
-          languagesDiv = <div key="languages list"><div className="listTitle">Languages used:</div><ul key="languages list">{listAggregator}</ul></div>
         })
         .then(() => {
           fetch(response.contributors_url, { // aggregating contributors list
@@ -106,6 +108,7 @@ class App extends Component {
 
             //--------
             // building card
+
             let cardDiv = [
               <div key="cardDiv" className="cardDiv">
                 <div className="ownerDiv">
@@ -113,7 +116,7 @@ class App extends Component {
                   <a href={'https://github.com' + response.owner.url.substr(28)} className="fatName">{response.owner.login}</a>
                 </div>
                 <div className="repoDiv">
-                  <h3 className="repoName">{response.name}</h3>
+                  <h3 className="repoName"><a href={fixedUrl} className="fatLink">{response.name}</a></h3>
                   <span className="repoStars"><span role="img" aria-label="star">⭐</span>{response.stargazers_count}</span>
                   <br/>Last commit: {response.updated_at.slice(0,-10)} at {response.updated_at.slice(11,-4)}<br/><br/>
                   {response.description}<br/><br/>             
@@ -152,7 +155,7 @@ class App extends Component {
     })
       .then(response => response.json())
       .then(response => {
-        console.log(response);
+        //console.log(response);
         this.setState( {loading: false});
         // Setting up RepoList
         if (response.total_count > 0) {
@@ -256,9 +259,7 @@ class App extends Component {
             {this.state.card}
           </div>
         }
-        {
-          //<footer>©2020 <a href="https://github.com/sanyavanya">@sanyavanya</a></footer>
-        }
+        <footer>©2020 <a href="https://github.com/sanyavanya">@sanyavanya</a></footer>  
       </div>
     ); 
   }
