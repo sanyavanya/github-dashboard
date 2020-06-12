@@ -1,5 +1,11 @@
 {
   "name": "github-dashboard",
+  "description": "A React app that uses GitHub API to search through repositories and sort them by rank.",
+  "author": {
+    "name": "Alexander Ivanov",
+    "email": "ivanov.unn@gmail.com",
+    "url": "https://github.com/sanyavanya"
+  },
   "homepage": "http://sanyavanya.github.io/github-dashboard",
   "version": "0.1.0",
   "private": true,

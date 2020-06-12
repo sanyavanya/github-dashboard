@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Switch, Link, useParams } from 'react-router-dom';
 //import logo from './logo.svg';
 import './App.css';
 import SearchField from './components/SearchField';
 import RepoList from './components/RepoList';
 import Paginator from './components/Paginator';
-
-import RepoCard from './components/RepoCard';
 
 class App extends Component {
   constructor() {
@@ -58,83 +55,83 @@ class App extends Component {
       })
       .then(response => response.json())
       .then(response => {
+        let empty = false;
+        if (response.size === 0) empty = true;
+        console.log(response);
         let fixedUrl = 'https://github.com' + response.url.substr(28);
         let languagesDiv = [];
         let contributorsDiv = [];
 
-        
-        fetch(response.languages_url, { // aggregating language list
-          method: 'get',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
-        })
-        .then(langResponse => langResponse.json())
-        .then(langResponse => {
-          let keys = [];
-          for (let k in langResponse) keys.push(k);
-          let listAggregator = [];
-          if (keys.length !== 0) {
-            for (let i = 0; i < keys.length; i++) {
-              let newLi = [<li key={"lang li #" + i}>{keys[i]}</li>];
-              listAggregator = listAggregator.concat(newLi);
-            }
-            languagesDiv = <div key="languages list"><div className="listTitle">Languages used:</div><ul key="languages list">{listAggregator}</ul></div>
-          }
-        })
-        .then(() => {
-          fetch(response.contributors_url, { // aggregating contributors list
+        if (!empty) {
+          fetch(response.languages_url, { // aggregating language list
             method: 'get',
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             }
           })
-          .then(contributorsResponse => contributorsResponse.json())
-          .then(contributorsResponse => {
+          .then(langResponse => langResponse.json())
+          .then(langResponse => {
+            let keys = [];
+            for (let k in langResponse) keys.push(k);
             let listAggregator = [];
-
-            if (Array.isArray(contributorsResponse)) {
-              let count = 10;
-              if (contributorsResponse.length < 10) count = contributorsResponse.length;
-              for (let i = 0; i < count; i++) {
-                let newLi = [<li key={"contr li #" + i}>{contributorsResponse[i].login}</li>];
+            if (keys.length !== 0) {
+              for (let i = 0; i < keys.length; i++) {
+                let newLi = [<li key={"lang li #" + i}>{keys[i]}</li>];
                 listAggregator = listAggregator.concat(newLi);
               }
-              if (contributorsResponse.length === 1) contributorsDiv = <div key="contributors list">{contributorsResponse[0].login} is the only contributor.</div>
-              else contributorsDiv = <div key="contributors list"><div className="listTitle">Top 10 contributors:</div><ul>{listAggregator}</ul></div>
-            } else contributorsDiv = <div key="contributors list">The history or contributor list is too large to list contributors for this repository via the API.</div>
-
-            //--------
-            // building card
-
-            let cardDiv = [
-              <div key="cardDiv" className="cardDiv">
-                <div className="ownerDiv">
-                  <img src={response.owner.avatar_url} alt="avatar" className="userpic"/><br/>
-                  <a href={'https://github.com' + response.owner.url.substr(28)} className="fatName">{response.owner.login}</a>
-                </div>
-                <div className="repoDiv">
-                  <h3 className="repoName"><a href={fixedUrl} className="fatLink">{response.name}</a></h3>
-                  <span className="repoStars"><span role="img" aria-label="star">⭐</span>{response.stargazers_count}</span>
-                  <br/>Last commit: {response.updated_at.slice(0,-10)} at {response.updated_at.slice(11,-4)}<br/><br/>
-                  {response.description}<br/><br/>             
-                  {languagesDiv}
-                  {contributorsDiv}<br/>
-                </div>
-              </div>
-            ];
-            this.setState({ loading: false });
-            this.setState({card: cardDiv});
-            this.setState({route: 'card'});
-            localStorage.setItem("state", JSON.stringify(this.state));
-            
+              languagesDiv = <div key="languages list"><div className="listTitle">Languages used:</div><ul key="languages list">{listAggregator}</ul></div>
+            }
           })
-        })        
+          .then(() => {
+            fetch(response.contributors_url, { // aggregating contributors list
+              method: 'get',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              }
+            })
+            .then(contributorsResponse => contributorsResponse.json())
+            .then(contributorsResponse => {
+              let listAggregator = [];
+
+              if (Array.isArray(contributorsResponse)) {
+                let count = 10;
+                if (contributorsResponse.length < 10) count = contributorsResponse.length;
+                for (let i = 0; i < count; i++) {
+                  let newLi = [<li key={"contr li #" + i}>{contributorsResponse[i].login}</li>];
+                  listAggregator = listAggregator.concat(newLi);
+                }
+                if (contributorsResponse.length === 1) contributorsDiv = <div key="contributors list">{contributorsResponse[0].login} is the only contributor.</div>;
+                else contributorsDiv = <div key="contributors list"><div className="listTitle">Top 10 contributors:</div><ul>{listAggregator}</ul></div>;
+              } else contributorsDiv = <div key="contributors list">The history or contributor list is too large to list contributors for this repository via the API.</div>;
+            })
+          })
+        } else response.description = "This repo is empty.";
+        //--------
+        // building card
+
+        let cardDiv = [
+          <div key="cardDiv" className="cardDiv">
+            <div className="ownerDiv">
+              <img src={response.owner.avatar_url} alt="avatar" className="userpic"/><br/>
+              <a href={'https://github.com' + response.owner.url.substr(28)} className="fatName">{response.owner.login}</a>
+            </div>
+            <div className="repoDiv">
+              <h3 className="repoName"><a href={fixedUrl} className="fatLink">{response.name}</a></h3>
+              <span className="repoStars"><span role="img" aria-label="star">⭐</span>{response.stargazers_count}</span>
+              <br/>Last commit: {response.updated_at.slice(0,-10)} at {response.updated_at.slice(11,-4)}<br/><br/>
+              {response.description}<br/><br/>             
+              {languagesDiv}
+              {contributorsDiv}<br/>
+            </div>
+          </div>
+        ];
+        this.setState({ loading: false });
+        this.setState({card: cardDiv});
+        this.setState({route: 'card'});
+        localStorage.setItem("state", JSON.stringify(this.state));     
       })
-      //.then(localStorage.setItem("state", JSON.stringify(this.state)))
-      //.then(window.location.href = '/:' + this.state.card)
     }, 0);
   }
 
