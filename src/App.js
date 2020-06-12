@@ -57,7 +57,7 @@ class App extends Component {
       .then(response => {
         let empty = false;
         if (response.size === 0) empty = true;
-        console.log(response);
+        //console.log(response);
         let fixedUrl = 'https://github.com' + response.url.substr(28);
         let languagesDiv = [];
         let contributorsDiv = [];
