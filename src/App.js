@@ -10,23 +10,27 @@ class App extends Component {
     super();
     this.state = {
       card: '',
-      contributors: [],
-      languages: [],
-      route: 'home',
       cardName: '',
+      contributors: [],
+      heading: [<h2 key='mostpop'>Top 10 GitHub repositories:</h2>],
+      languages: [],      
       input: '',
       items: [],
-      itemsPerPage: 10,
       loading: true,
       page: 1,
-      pagesAmountMax: 10,
       pagesAmount: 1,
-      heading: [<h2 key='mostpop'>Top 10 GitHub repositories:</h2>]      
+      route: 'home'   
     }
+    this.headers = {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+    }    
+    this.itemsPerPage = 10;
+    this.pagesAmountMax = 10;
   }
 
   onInputChange = (event) => {
-    this.setState({input: event.target.value});
+    this.setState({ input: event.target.value });
     this.setState({ page: 1 });
     localStorage.setItem("state", JSON.stringify(this.state));
     this.setState({ loading: true });
@@ -46,8 +50,7 @@ class App extends Component {
   }
 
   openCard = (link) => {
-    this.setState({ loading: true });
-    
+    this.setState({ loading: true });    
     let repoResponse = '';
     let languagesDiv = [];
     let contributorsDiv = [];    
@@ -55,10 +58,7 @@ class App extends Component {
     setTimeout(() => {
       fetch(link, {
         method: 'get',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
+        headers: this.headers
       })
       .then(response => response.json())
       .then(response => {
@@ -80,18 +80,15 @@ class App extends Component {
               </div>
             ];
             this.setState({ loading: false });
-            this.setState({card: cardDiv});
-            this.setState({route: 'card'});
+            this.setState({ card: cardDiv });
+            this.setState({ route: 'card' });
             localStorage.setItem("state", JSON.stringify(this.state)); 
           return;
         }
 
         fetch(repoResponse.languages_url, { // aggregating language list
           method: 'get',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
+          headers: this.headers
         })
         .then(langResponse => langResponse.json())
         .then(langResponse => {
@@ -109,10 +106,7 @@ class App extends Component {
         .then(() => {
           fetch(response.contributors_url, { // aggregating contributors list
             method: 'get',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            }
+            headers: this.headers
           })
           .then(contributorsResponse => contributorsResponse.json())
           .then(contributorsResponse => {
@@ -147,53 +141,48 @@ class App extends Component {
               </div>
             ];
             this.setState({ loading: false });
-            this.setState({card: cardDiv});
-            this.setState({route: 'card'});
+            this.setState({ card: cardDiv });
+            this.setState({ route: 'card' });
             localStorage.setItem("state", JSON.stringify(this.state));   
           })     
         })
-
       })
- 
     }, 0);
   }
 
   buildSearchQuiery = (q) => {
     let url = 'https://api.github.com/search/repositories?q=';
     url += (q === '') ? 'stars%3A%3E100' : q;
-    url += `&sort=stars&order=desc&per_page=${this.state.itemsPerPage}&page=${this.state.page}`;
+    url += `&sort=stars&order=desc&per_page=${this.itemsPerPage}&page=${this.state.page}`;
     return url;
   }
 
   setItems = () => {
     let url = this.buildSearchQuiery(this.state.input);
-    this.setState( {loading: true});
+    this.setState({ loading: true });
 
     fetch(url, {
       method: 'get',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
+      headers: this.headers
     })
       .then(response => response.json())
       .then(response => {
         //console.log(response);
-        this.setState( {loading: false});
+        this.setState({ loading: false });
         // Setting up RepoList
         if (response.total_count > 0) {
-          let count = this.state.itemsPerPage;
+          let count = this.itemsPerPage;
           if (response.total_count < 10) count = response.total_count;
 
-          if (this.state.input === '') this.setState( { heading: [<h2 key='top10'>Top 10 GitHub repositories:</h2>] } );
-          else this.setState( { heading: [<h2 key='mostpop'>Most starred “{this.state.input}” repositories on GitHub:</h2>] } );
+          if (this.state.input === '') this.setState({ heading: [<h2 key='top10'>Top 10 GitHub repositories:</h2>] });
+          else this.setState({ heading: [<h2 key='mostpop'>Most starred “{this.state.input}” repositories on GitHub:</h2>] });
 
           let tableHead = [<thead key='thead'><tr><th>Rank</th><th>Name</th><th>Rating</th><th>Updated</th><th>URL</th></tr></thead>];
           let aggregator = [];
 
           for (let i = 0; i < count; i++) {
             let newDiv = [
-                <tr key={'key'+i}><td>#{this.state.itemsPerPage * (this.state.page-1) + i+1}</td>
+                <tr key={'key'+i}><td>#{this.itemsPerPage * (this.state.page-1) + i+1}</td>
                 <td><span className="fatName" onClick={()=>this.openCard(response.items[i].url)}>{response.items[i].name}</span></td>
                 <td><span role="img" aria-label="star">⭐</span>{response.items[i].stargazers_count}</td>
                 <td>{response.items[i].updated_at.slice(0,-10)}</td>
@@ -204,33 +193,33 @@ class App extends Component {
           let tableBody = [<tbody key='tbody'>{aggregator}</tbody>]
           let table = [<table key='table'>{tableHead}{tableBody}</table>]
 
-          this.setState({items: table});
+          this.setState({ items: table });
           localStorage.setItem("state", JSON.stringify(this.state));
 
 
           // Setting up Paginator
           if (this.state.input !== '') {
-            if (response.total_count >= this.state.itemsPerPage * this.state.pagesAmountMax) this.setState({pagesAmount: this.state.pagesAmountMax});
+            if (response.total_count >= this.itemsPerPage * this.pagesAmountMax) this.setState({ pagesAmount: this.pagesAmountMax });
             else {
-              let tempPagesAmount = Math.floor(response.total_count / this.state.itemsPerPage);
-              if (response.total_count % this.state.itemsPerPage !== 0) tempPagesAmount++;
-              this.setState({pagesAmount: tempPagesAmount});
+              let tempPagesAmount = Math.floor(response.total_count / this.itemsPerPage);
+              if (response.total_count % this.itemsPerPage !== 0) tempPagesAmount++;
+              this.setState({ pagesAmount: tempPagesAmount });
               localStorage.setItem("state", JSON.stringify(this.state));
             }
           }
           else {
-            this.setState({pagesAmount: 1});
+            this.setState({ pagesAmount: 1 });
             localStorage.setItem("state", JSON.stringify(this.state));
           }
         } else {
-          this.setState( { heading: [<h2 key='notfound'>No “{this.state.input}” repositories found on GitHub!</h2>] , items: [], pagesAmount: 1, page: 1} );
+          this.setState({ heading: [<h2 key='notfound'>No “{this.state.input}” repositories found on GitHub!</h2>] , items: [], pagesAmount: 1, page: 1} );
 
         }
       })
 
       .catch(err => {
-        this.setState( {loading: false });
-        this.setState({ items: [<div key="err">We are limited to 10 requests per minute :(</div>] , heading: [<h2 key='mostpop'>Oops!</h2>]});
+        this.setState({ loading: false });
+        this.setState({ items: [<div key="err">We are limited to 10 requests per minute :(</div>] , heading: [<h2 key='mostpop'>Oops!</h2>] });
         localStorage.setItem("state", JSON.stringify(this.state));
       });
     
@@ -275,7 +264,7 @@ class App extends Component {
           </div>
           :
           <div>
-            <span className="fatName" onClick={() => this.setState({route: 'home'})}>← Back to Dashboard</span><br/><br/>
+            <span className="fatName" onClick={() => this.setState({ route: 'home' })}>← Back to Dashboard</span><br/><br/>
             {this.state.card}
           </div>
         }
