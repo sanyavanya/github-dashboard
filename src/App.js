@@ -22,6 +22,7 @@ class App extends Component {
       route: 'home'   
     }
     this.itemsPerPage = 10;
+    this.localStorageStateKey = "state";
     this.options = {
           method: 'get',
           headers: {
@@ -33,16 +34,15 @@ class App extends Component {
   }
 
   buildSearchQuiery = (q) => {
-    let url = 'https://api.github.com/search/repositories?q=';
-    url += (q === '') ? 'stars%3A%3E100' : q;
-    url += `&sort=stars&order=desc&per_page=${this.itemsPerPage}&page=${this.state.page}`;
-    return url;
+    const defaultQuery = "stars%3A%3E" + 100; // this means ":>100"
+    if (q === '') q = defaultQuery;
+    return `https://api.github.com/search/repositories?q=${q}&sort=stars&order=desc&per_page=${this.itemsPerPage}&page=${this.state.page}`;
   }
 
   onInputChange = (event) => {
     this.setState({ input: event.target.value });
     this.setState({ page: 1 });
-    localStorage.setItem("state", JSON.stringify(this.state));
+    localStorage.setItem(this.localStorageStateKey, JSON.stringify(this.state));
     this.setState({ loading: true });
 
     let delayChecker = '';
@@ -55,7 +55,7 @@ class App extends Component {
 
   onPageChange = (i) => {
     this.setState({ page: Number(i.target.innerHTML) });
-    localStorage.setItem("state", JSON.stringify(this.state));
+    localStorage.setItem(this.localStorageStateKey, JSON.stringify(this.state));
     setTimeout(() => this.setItems(), 0);
   }
 
@@ -89,7 +89,7 @@ class App extends Component {
             this.setState({ loading: false });
             this.setState({ card: cardDiv });
             this.setState({ route: 'card' });
-            localStorage.setItem("state", JSON.stringify(this.state)); 
+            localStorage.setItem(this.localStorageStateKey, JSON.stringify(this.state)); 
           return;
         }
 
@@ -146,7 +146,7 @@ class App extends Component {
             this.setState({ loading: false });
             this.setState({ card: cardDiv });
             this.setState({ route: 'card' });
-            localStorage.setItem("state", JSON.stringify(this.state));   
+            localStorage.setItem(this.localStorageStateKey, JSON.stringify(this.state));   
           })     
         })
       })
@@ -187,7 +187,7 @@ class App extends Component {
           let table = [<table key='table'>{tableHead}{tableBody}</table>]
 
           this.setState({ items: table });
-          localStorage.setItem("state", JSON.stringify(this.state));
+          localStorage.setItem(this.localStorageStateKey, JSON.stringify(this.state));
 
           // setting up Paginator
           if (this.state.input !== '') {
@@ -196,12 +196,12 @@ class App extends Component {
               let tempPagesAmount = Math.floor(response.total_count / this.itemsPerPage);
               if (response.total_count % this.itemsPerPage !== 0) tempPagesAmount++;
               this.setState({ pagesAmount: tempPagesAmount });
-              localStorage.setItem("state", JSON.stringify(this.state));
+              localStorage.setItem(this.localStorageStateKey, JSON.stringify(this.state));
             }
           }
           else {
             this.setState({ pagesAmount: 1 });
-            localStorage.setItem("state", JSON.stringify(this.state));
+            localStorage.setItem(this.localStorageStateKey, JSON.stringify(this.state));
           }
         } else {
           this.setState({ heading: [<h2 key='notfound'>No “{this.state.input}” repositories found on GitHub!</h2>] , items: [], pagesAmount: 1, page: 1} );
@@ -211,12 +211,12 @@ class App extends Component {
       .catch(err => {
         this.setState({ loading: false });
         this.setState({ items: [<div key="err">We are limited to 10 requests per minute :(</div>] , heading: [<h2 key='mostpop'>Oops!</h2>] });
-        localStorage.setItem("state", JSON.stringify(this.state));
+        localStorage.setItem(this.localStorageStateKey, JSON.stringify(this.state));
       });    
   }
 
   componentDidMount() {
-    let data = localStorage.getItem("state");
+    let data = localStorage.getItem(this.localStorageStateKey);
     if (data) {
       data = JSON.parse(data);
       this.setState({
