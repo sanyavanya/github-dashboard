@@ -21,12 +21,22 @@ class App extends Component {
       pagesAmount: 1,
       route: 'home'   
     }
-    this.headers = {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-    }    
     this.itemsPerPage = 10;
+    this.options = {
+          method: 'get',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }    
+    }
     this.pagesAmountMax = 10;
+  }
+
+  buildSearchQuiery = (q) => {
+    let url = 'https://api.github.com/search/repositories?q=';
+    url += (q === '') ? 'stars%3A%3E100' : q;
+    url += `&sort=stars&order=desc&per_page=${this.itemsPerPage}&page=${this.state.page}`;
+    return url;
   }
 
   onInputChange = (event) => {
@@ -56,10 +66,7 @@ class App extends Component {
     let contributorsDiv = [];    
 
     setTimeout(() => {
-      fetch(link, {
-        method: 'get',
-        headers: this.headers
-      })
+      fetch(link, this.options)
       .then(response => response.json())
       .then(response => {
         repoResponse = response;
@@ -86,10 +93,8 @@ class App extends Component {
           return;
         }
 
-        fetch(repoResponse.languages_url, { // aggregating language list
-          method: 'get',
-          headers: this.headers
-        })
+        // aggregating language list
+        fetch(repoResponse.languages_url, this.options)
         .then(langResponse => langResponse.json())
         .then(langResponse => {
           let keys = [];
@@ -104,10 +109,8 @@ class App extends Component {
           }
         })
         .then(() => {
-          fetch(response.contributors_url, { // aggregating contributors list
-            method: 'get',
-            headers: this.headers
-          })
+          // aggregating contributors list
+          fetch(response.contributors_url, this.options)
           .then(contributorsResponse => contributorsResponse.json())
           .then(contributorsResponse => {
             let listAggregator = [];
@@ -150,26 +153,16 @@ class App extends Component {
     }, 0);
   }
 
-  buildSearchQuiery = (q) => {
-    let url = 'https://api.github.com/search/repositories?q=';
-    url += (q === '') ? 'stars%3A%3E100' : q;
-    url += `&sort=stars&order=desc&per_page=${this.itemsPerPage}&page=${this.state.page}`;
-    return url;
-  }
-
   setItems = () => {
     let url = this.buildSearchQuiery(this.state.input);
     this.setState({ loading: true });
 
-    fetch(url, {
-      method: 'get',
-      headers: this.headers
-    })
+    fetch(url, this.options)
       .then(response => response.json())
       .then(response => {
-        //console.log(response);
         this.setState({ loading: false });
-        // Setting up RepoList
+
+        // setting up repo list
         if (response.total_count > 0) {
           let count = this.itemsPerPage;
           if (response.total_count < 10) count = response.total_count;
@@ -196,8 +189,7 @@ class App extends Component {
           this.setState({ items: table });
           localStorage.setItem("state", JSON.stringify(this.state));
 
-
-          // Setting up Paginator
+          // setting up Paginator
           if (this.state.input !== '') {
             if (response.total_count >= this.itemsPerPage * this.pagesAmountMax) this.setState({ pagesAmount: this.pagesAmountMax });
             else {
@@ -213,7 +205,6 @@ class App extends Component {
           }
         } else {
           this.setState({ heading: [<h2 key='notfound'>No “{this.state.input}” repositories found on GitHub!</h2>] , items: [], pagesAmount: 1, page: 1} );
-
         }
       })
 
@@ -221,11 +212,10 @@ class App extends Component {
         this.setState({ loading: false });
         this.setState({ items: [<div key="err">We are limited to 10 requests per minute :(</div>] , heading: [<h2 key='mostpop'>Oops!</h2>] });
         localStorage.setItem("state", JSON.stringify(this.state));
-      });
-    
+      });    
   }
 
-  componentDidMount(){
+  componentDidMount() {
     let data = localStorage.getItem("state");
     if (data) {
       data = JSON.parse(data);
@@ -238,8 +228,6 @@ class App extends Component {
   }
 
   render() {
-    
-
     let itemsDynamic = [<div key='spinner' className='spinnerWrap'><img src={require('./img/spinner.png')} alt ="..." className='spinner'/></div>], headingDynamic = [<h2 key='mostpop'>Loading...</h2>];
     if (!this.state.loading) {
       itemsDynamic = this.state.items;
