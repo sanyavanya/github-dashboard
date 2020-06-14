@@ -49,8 +49,6 @@ class App extends Component {
     this.setState({ loading: true });
     
     let repoResponse = '';
-    let fixedUrl = '';
-    let ownerUrl = '';
     let languagesDiv = [];
     let contributorsDiv = [];    
 
@@ -65,19 +63,16 @@ class App extends Component {
       .then(response => response.json())
       .then(response => {
         repoResponse = response;
-        fixedUrl = 'https://github.com' + repoResponse.url.substr(28);
-        ownerUrl = 'https://github.com' + repoResponse.owner.url.substr(28);
-
         if (repoResponse.size === 0) {
           repoResponse.description = "This repo is empty.";
           let cardDiv = [
               <div key="cardDiv" className="cardDiv">
                 <div className="ownerDiv">
                   <img src={repoResponse.owner.avatar_url} alt="avatar" className="userpic"/><br/>
-                  <a href={ownerUrl} className="fatName">{repoResponse.owner.login}</a>
+                  <a href={repoResponse.owner.html_url} className="fatName">{repoResponse.owner.login}</a>
                 </div>
                 <div className="repoDiv">
-                  <h3 className="repoName"><a href={fixedUrl} className="fatLink">{repoResponse.name}</a></h3>
+                  <h3 className="repoName"><a href={repoResponse.html_url} className="fatLink">{repoResponse.name}</a></h3>
                   <span className="repoStars"><span role="img" aria-label="star">⭐</span>{repoResponse.stargazers_count}</span>
                   <br/>Last commit: {repoResponse.updated_at.slice(0,-10)} at {repoResponse.updated_at.slice(11,-4)}<br/><br/>
                   {repoResponse.description}<br/><br/>
@@ -139,10 +134,10 @@ class App extends Component {
               <div key="cardDiv" className="cardDiv">
                 <div className="ownerDiv">
                   <img src={repoResponse.owner.avatar_url} alt="avatar" className="userpic"/><br/>
-                  <a href={ownerUrl} className="fatName">{repoResponse.owner.login}</a>
+                  <a href={repoResponse.owner.html_url} className="fatName">{repoResponse.owner.login}</a>
                 </div>
                 <div className="repoDiv">
-                  <h3 className="repoName"><a href={fixedUrl} className="fatLink">{repoResponse.name}</a></h3>
+                  <h3 className="repoName"><a href={repoResponse.html_url} className="fatLink">{repoResponse.name}</a></h3>
                   <span className="repoStars"><span role="img" aria-label="star">⭐</span>{repoResponse.stargazers_count}</span>
                   <br/>Last commit: {repoResponse.updated_at.slice(0,-10)} at {repoResponse.updated_at.slice(11,-4)}<br/><br/>
                   {repoResponse.description}<br/><br/>             
@@ -194,15 +189,12 @@ class App extends Component {
           let aggregator = [];
 
           for (let i = 0; i < count; i++) {
-            let fixedUrl = 'https://github.com' + response.items[i].url.substr(28);
-            // let fixedUrl = response.items[i].url;
-
             let newDiv = [
                 <tr key={'key'+i}><td>#{this.state.itemsPerPage * (this.state.page-1) + i+1}</td>
                 <td><span className="fatName" onClick={()=>this.openCard(response.items[i].url)}>{response.items[i].name}</span></td>
                 <td><span role="img" aria-label="star">⭐</span>{response.items[i].stargazers_count}</td>
                 <td>{response.items[i].updated_at.slice(0,-10)}</td>
-                <td><a href={fixedUrl} className="fatLink">{fixedUrl.substr(8)}</a></td></tr>
+                <td><a href={response.items[i].html_url} className="fatLink">{response.items[i].html_url.substr(8)}</a></td></tr>
             ];
             aggregator = aggregator.concat(newDiv);
           }
