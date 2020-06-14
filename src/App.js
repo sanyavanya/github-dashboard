@@ -158,13 +158,16 @@ class App extends Component {
     }, 0);
   }
 
+  buildSearchQuiery = (q) => {
+    let url = 'https://api.github.com/search/repositories?q=';
+    url += (q === '') ? 'stars%3A%3E100' : q;
+    url += `&sort=stars&order=desc&per_page=${this.state.itemsPerPage}&page=${this.state.page}`;
+    return url;
+  }
+
   setItems = () => {
-    let url = '';
+    let url = this.buildSearchQuiery(this.state.input);
     this.setState( {loading: true});
-
-    if (this.state.input === '') url = `https://api.github.com/search/repositories?q=stars%3A%3E100&sort=stars&order=desc&per_page=${this.state.itemsPerPage}&page=${this.state.page}`;
-    else url = `https://api.github.com/search/repositories?q=${this.state.input}&sort=stars&order=desc&per_page=${this.state.itemsPerPage}&page=${this.state.page}`;
-
 
     fetch(url, {
       method: 'get',
