@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/github-dashboard/static/css/main.8cd3db1f.chunk.css",
-    "main.js": "/github-dashboard/static/js/main.bfbf47fa.chunk.js",
-    "main.js.map": "/github-dashboard/static/js/main.bfbf47fa.chunk.js.map",
+    "main.js": "/github-dashboard/static/js/main.68be49fb.chunk.js",
+    "main.js.map": "/github-dashboard/static/js/main.68be49fb.chunk.js.map",
     "runtime-main.js": "/github-dashboard/static/js/runtime-main.4926da2c.js",
     "runtime-main.js.map": "/github-dashboard/static/js/runtime-main.4926da2c.js.map",
     "static/js/2.589bf15b.chunk.js": "/github-dashboard/static/js/2.589bf15b.chunk.js",
     "static/js/2.589bf15b.chunk.js.map": "/github-dashboard/static/js/2.589bf15b.chunk.js.map",
     "index.html": "/github-dashboard/index.html",
-    "precache-manifest.f7f173607098c79bfc4a529334c320ed.js": "/github-dashboard/precache-manifest.f7f173607098c79bfc4a529334c320ed.js",
+    "precache-manifest.e980d6c5b2b1f67513943610a278445f.js": "/github-dashboard/precache-manifest.e980d6c5b2b1f67513943610a278445f.js",
     "service-worker.js": "/github-dashboard/service-worker.js",
     "static/css/main.8cd3db1f.chunk.css.map": "/github-dashboard/static/css/main.8cd3db1f.chunk.css.map",
     "static/js/2.589bf15b.chunk.js.LICENSE.txt": "/github-dashboard/static/js/2.589bf15b.chunk.js.LICENSE.txt",
@@ -18,6 +18,6 @@
     "static/js/runtime-main.4926da2c.js",
     "static/js/2.589bf15b.chunk.js",
     "static/css/main.8cd3db1f.chunk.css",
-    "static/js/main.bfbf47fa.chunk.js"
+    "static/js/main.68be49fb.chunk.js"
   ]
 }
